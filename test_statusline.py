@@ -75,6 +75,16 @@ class StatuslineTest(unittest.TestCase):
         run(inp, self.log)
         self.assertEqual(len(read_lines(self.log)), 1, "empty columns count as the same")
 
+    def test_session_only_without_session_id(self):
+        inp = {"model": {"display_name": "Opus"}, "rate_limits": {"five_hour": {"used_percentage": 20}}}
+        run(inp, self.log)
+        run(inp, self.log)
+        self.assertEqual(len(read_lines(self.log)), 1)
+
+    def test_null_input(self):
+        self.assertEqual(run("null", self.log), "?")
+        self.assertFalse(os.path.exists(self.log))
+
     def test_log_cannot_be_written(self):
         log = os.path.join(self.tmp.name, "missing", "folder", "usage-log.tsv")
         self.assertEqual(run(full(20, 41), log), "Opus | ctx 12% | session 20% / week 41%")

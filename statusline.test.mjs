@@ -85,6 +85,20 @@ test('only one limit present: the other shows -, the log column is empty', async
   assert.equal((await readLines(log)).length, 1, 'empty columns count as the same');
 });
 
+test('session only, no session ID: the same value is not written twice', async () => {
+  const log = await newLog();
+  const input = { model: { display_name: 'Opus' }, rate_limits: { five_hour: { used_percentage: 20 } } };
+  run(input, log);
+  run(input, log);
+  assert.equal((await readLines(log)).length, 1);
+});
+
+test('null input: does not fail, prints ?, writes no log', async () => {
+  const log = await newLog();
+  assert.equal(run('null', log), '?');
+  assert.ok(!existsSync(log));
+});
+
 test('still shows the line when the log cannot be written', async () => {
   const log = path.join(await newLog(), 'missing', 'folder', 'usage-log.tsv');
   assert.equal(run(full(20, 41), log), 'Opus | ctx 12% | session 20% / week 41%');

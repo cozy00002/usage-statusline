@@ -16,7 +16,7 @@ const labels = process.env.STATUSLINE_LANG === 'ja' ? { session: 'セッショ�
 
 let data = {};
 try {
-  data = JSON.parse(readFileSync(0, 'utf8'));
+  data = JSON.parse(readFileSync(0, 'utf8')) ?? {};
 } catch {
   // Show whatever we can even if the input is unreadable
 }
@@ -40,7 +40,8 @@ if (session !== null || week !== null) {
     } catch {
       // No log yet
     }
-    const [, lastSession, lastWeek] = last.split('\t');
+    // trimEnd drops empty trailing columns, so treat missing ones as empty
+    const [, lastSession = '', lastWeek = ''] = last.split('\t');
     if (lastSession !== String(session ?? '') || lastWeek !== String(week ?? '')) {
       const now = new Date();
       const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16).replace('T', ' ');

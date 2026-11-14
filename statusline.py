@@ -85,8 +85,9 @@ if session is not None or week is not None:
         except OSError:
             pass  # No log yet
         cols = last.split("\t")
-        last_session = cols[1] if len(cols) > 1 else None
-        last_week = cols[2] if len(cols) > 2 else None
+        # rstrip drops empty trailing columns, so treat missing ones as empty
+        last_session = cols[1] if len(cols) > 1 else ""
+        last_week = cols[2] if len(cols) > 2 else ""
         s = "" if session is None else str(session)
         w = "" if week is None else str(week)
         if last_session != s or last_week != w:
